@@ -1,5 +1,13 @@
-import express from 'express';
+import http from 'http';
 
-const app = express();
-app.get('/', (request, response) => response.json({ message: 'Hello World' }));
-app.listen(3000);
+import config from './config/config';
+import logging from './config/logging';
+
+import app from './app';
+
+const NAMESPACE = 'Server';
+
+const httpServer = http.createServer(app);
+httpServer.listen(config.server.port, () =>
+  logging.info(NAMESPACE, `Server Running on ${config.server.hostname}:${config.server.port}`)
+);

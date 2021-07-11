@@ -1,1 +1,0 @@
-# vanilla-nodejs-template

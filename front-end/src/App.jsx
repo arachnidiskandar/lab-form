@@ -1,26 +1,29 @@
 import React from 'react';
+import { ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Container from '@material-ui/core/Container';
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+
+import AnswerSurvey from './routes/AnswerSurvey';
+import CreateForm from './routes/CreateForm';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Edit
-          {' '}
-          <code>src/App.js</code>
-          {' '}
-          and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider>
+      <CssBaseline />
+      <Container>
+        <Router>
+          <Switch>
+            <Route path="/criar-formulario">
+              <CreateForm />
+            </Route>
+            <Route path="/responder-formulario">
+              <AnswerSurvey />
+            </Route>
+          </Switch>
+        </Router>
+      </Container>
+    </ThemeProvider>
   );
 }
 

@@ -3,11 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: [
-    'plugin:react/recommended',
-    'airbnb',
-    'prettier',
-  ],
+  extends: ['plugin:react/recommended', 'airbnb', 'prettier', 'plugin:prettier/recommended'],
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
@@ -15,11 +11,11 @@ module.exports = {
     ecmaVersion: 12,
     sourceType: 'module',
   },
-  plugins: [
-    'react',
-    'prettier',
-
-  ],
+  plugins: ['react', 'prettier'],
   rules: {
+    'no-unused-vars': 'off',
+    'react/prop-types': 0,
+    'react/jsx-props-no-spreading': 'off',
+    'react/destructuring-assignment': 0,
   },
 };

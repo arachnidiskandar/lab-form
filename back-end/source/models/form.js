@@ -1,8 +1,8 @@
 class Form {
-	constructor(title, questions, availableToAnyone) {
+	constructor(title, description, questions) {
 		this.title = title
+		this.description = description
 		this.questions = questions
-		this.availableToAnyone = availableToAnyone
 	}
 }
 

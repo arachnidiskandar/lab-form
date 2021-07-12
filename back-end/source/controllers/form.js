@@ -5,11 +5,11 @@ const Form = require('../models/form.js')
 let database = firebase.database()
 
 const createForm = async (req, res) => {
-	const { title, questions, availableToAnyone } = req.query
+	const { title, description, questions } = req.body
 	const form = new Form(
 		title,
+		description,
 		questions,
-		availableToAnyone,
 	)
 	try {
 		const result = await database.ref('forms').push(form)
@@ -20,7 +20,7 @@ const createForm = async (req, res) => {
 }
 
 const deleteForm = async (req, res) => {
-	const { id } = req.query
+	const { id } = req.body
 	try {
 		const result = await database.ref('forms').child(id).remove()
 		res.status(204).json(result)

@@ -4,6 +4,8 @@ const form = require('./routes/form.js')
 
 const app = express()
 
+app.use(express.json());
+
 app.use('/api', form.routes)
 
 app.listen(config.port, () => {

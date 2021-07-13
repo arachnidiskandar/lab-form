@@ -3,8 +3,9 @@ const firebase = require('../database.js')
 const Form = require('../models/form.js')
 
 let database = firebase.database()
+const forms = {}
 
-const createForm = async (req, res) => {
+forms.create = async (req, res) => {
 	const { title, description, questions } = req.body
 	const form = new Form(
 		title,
@@ -19,7 +20,7 @@ const createForm = async (req, res) => {
 	}
 }
 
-const getForm = async (req, res) => {
+forms.get = async (req, res) => {
 	const { id } = req.params
 	try {
 		const result = await database.ref('forms').child(id).once('value')
@@ -29,7 +30,7 @@ const getForm = async (req, res) => {
 	}
 }
 
-const getAllForms = async (req, res) => {
+forms.all = async (req, res) => {
 	try {
 		const result = await database.ref('forms').once('value')
 		res.status(200).json(result)
@@ -38,7 +39,7 @@ const getAllForms = async (req, res) => {
 	}
 }
 
-const updateForm = async (req, res) => {
+forms.update = async (req, res) => {
 	const { id } = req.params
 	const { title, description, questions } = req.body
 	const form = new Form(
@@ -54,7 +55,7 @@ const updateForm = async (req, res) => {
 	}
 }
 
-const deleteForm = async (req, res) => {
+forms.remove = async (req, res) => {
 	const { id } = req.body
 	try {
 		const result = await database.ref('forms').child(id).remove()
@@ -64,10 +65,4 @@ const deleteForm = async (req, res) => {
 	}
 }
 
-module.exports = {
-	createForm,
-	getForm,
-	getAllForms,
-	updateForm,
-	deleteForm
-}
+module.exports = forms

@@ -1,11 +1,24 @@
 const express = require('express')
+const Joi = require('joi')
 const firebase = require('../database.js')
 const Form = require('../models/form.js')
 
 let database = firebase.database()
 const forms = {}
 
-forms.create = async (req, res) => {
+const schema = Joi.object({
+	title: Joi.string().required().label('title'),
+	description: Joi.required().label('description'),
+	questions: Joi.required().label('questions'),
+})
+
+forms.create = async (req, res, next) => {
+	const { error } = schema.validate(req.body)
+	if (error) {
+		res.status(400).json({ message: error.details[0].message })
+		return next()
+	}
+
 	const { title, description, questions } = req.body
 	const form = new Form(
 		title,
@@ -39,7 +52,13 @@ forms.all = async (req, res) => {
 	}
 }
 
-forms.update = async (req, res) => {
+forms.update = async (req, res, next) => {
+	const { error } = schema.validate(req.body)
+	if (error) {
+		res.status(400).json({ message: error.details[0].message })
+		return next()
+	}
+
 	const { id } = req.params
 	const { title, description, questions } = req.body
 	const form = new Form(
@@ -55,7 +74,15 @@ forms.update = async (req, res) => {
 	}
 }
 
-forms.remove = async (req, res) => {
+forms.remove = async (req, res, next) => {
+	const { error } = Joi.object({
+		id: Joi.string().required().label('id'),
+	}).validate(req.body)
+	if (error) {
+		res.status(400).json({ message: error.details[0].message })
+		return next()
+	}
+
 	const { id } = req.body
 	try {
 		const result = await database.ref('forms').child(id).remove()

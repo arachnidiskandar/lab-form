@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Card, CardContent, TextField, Button, Container, Typography } from '@material-ui/core';
+import { Card, CardContent, TextField, Button, Container, Typography, Snackbar } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { styled } from '@material-ui/core/styles';
 import { useForm, useFieldArray } from 'react-hook-form';
 import Alert from '@material-ui/lab/Alert';
+import axios from 'axios';
 import Question from './Question';
 import ModalShare from './ModalShare';
 
@@ -32,6 +33,8 @@ const PageContainer = styled(Container)({
 
 const CreateForm = () => {
   const [openModal, setOpenModal] = useState(false);
+  const [errorState, setErrorState] = useState(null);
+
   const {
     register,
     handleSubmit,
@@ -49,11 +52,18 @@ const CreateForm = () => {
     name: 'questions',
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (data.questions.length === 0) {
       setError('questions', { type: 'manual', message: 'É necessário pelo menos uma pergunta' });
     }
-    setOpenModal(true);
+    try {
+      const response = await axios.post('/forms/create', data);
+      console.log(response);
+      setOpenModal(true);
+    } catch (error) {
+      console.log(error);
+      setErrorState(error);
+    }
   };
 
   const addQuestion = () => {
@@ -112,6 +122,11 @@ const CreateForm = () => {
           Finalizar questionário
         </Button>
       </form>
+      <Snackbar open={errorState}>
+        <Alert onClose={() => setErrorState(null)} severity="error" elevation={6} variant="filled">
+          {errorState?.message}
+        </Alert>
+      </Snackbar>
       <ModalShare open={openModal} handleClose={() => setOpenModal(false)} />
     </PageContainer>
   );

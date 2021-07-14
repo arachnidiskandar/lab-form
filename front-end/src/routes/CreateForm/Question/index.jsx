@@ -38,7 +38,6 @@ const Question = ({ register, item, index, control, deleteQuestion, error }) => 
   const handleChange = (event) => {
     setQuestionType(event.target.value);
   };
-  console.log(error);
   return (
     <StyledQuestion>
       <CardContent>

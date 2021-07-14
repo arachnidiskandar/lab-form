@@ -8,7 +8,7 @@ const forms = {}
 
 const schema = Joi.object({
 	title: Joi.string().required().label('title'),
-	description: Joi.string(),
+	description: Joi.required().label('description'),
 	questions: Joi.required().label('questions'),
 })
 

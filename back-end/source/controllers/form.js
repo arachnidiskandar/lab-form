@@ -8,8 +8,8 @@ const forms = {}
 
 const schema = Joi.object({
 	title: Joi.string().required().label('title'),
-	description: Joi.required().label('description'),
-	questions: Joi.required().label('questions'),
+	description: Joi.string().label('description'),
+	questions: Joi.array().min(1).required().label('questions'),
 })
 
 forms.create = async (req, res, next) => {
@@ -19,7 +19,7 @@ forms.create = async (req, res, next) => {
 		return next()
 	}
 
-	const { title, description, questions } = req.body
+	const { title, description = null, questions } = req.body
 	const form = new Form(
 		title,
 		description,
@@ -60,7 +60,7 @@ forms.update = async (req, res, next) => {
 	}
 
 	const { id } = req.params
-	const { title, description, questions } = req.body
+	const { title, description = null, questions } = req.body
 	const form = new Form(
 		title,
 		description,

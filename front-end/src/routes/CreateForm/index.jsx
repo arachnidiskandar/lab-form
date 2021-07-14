@@ -61,7 +61,6 @@ const CreateForm = () => {
       console.log(response);
       setOpenModal(true);
     } catch (error) {
-      console.log(error);
       setErrorState(error);
     }
   };
@@ -122,7 +121,7 @@ const CreateForm = () => {
           Finalizar questionário
         </Button>
       </form>
-      <Snackbar open={errorState}>
+      <Snackbar open={errorState} autoHideDuration={5000}>
         <Alert onClose={() => setErrorState(null)} severity="error" elevation={6} variant="filled">
           {errorState?.message}
         </Alert>

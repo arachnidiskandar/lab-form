@@ -20,6 +20,7 @@ const PageContainer = styled(Container)({
   '& .MuiButton-outlined': {
     width: '50%',
     alignSelf: 'center',
+    marginTop: '20px',
     marginBottom: '40px',
   },
   '& .MuiButton-containedSizeLarge': {
@@ -54,11 +55,11 @@ const CreateForm = () => {
 
   const onSubmit = async (data) => {
     if (data.questions.length === 0) {
-      setError('questions', { type: 'manual', message: 'É necessário pelo menos uma pergunta' });
+      setError('questions', { message: 'É necessário pelo menos uma pergunta' });
+      return;
     }
     try {
       const response = await axios.post('/forms/create', data);
-      console.log(response);
       setOpenModal(true);
     } catch (error) {
       setErrorState(error);
@@ -66,7 +67,8 @@ const CreateForm = () => {
   };
 
   const addQuestion = () => {
-    clearErrors('questions.type');
+    clearErrors('questions.message');
+    clearErrors('questions.ref');
     append({ questionTitle: '', questionType: '' });
   };
 

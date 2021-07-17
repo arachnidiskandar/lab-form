@@ -1,5 +1,5 @@
 class Form {
-	constructor(title, description, questions) {
+	constructor(title, description = null, questions) {
 		this.title = title
 		this.description = description
 		this.questions = questions

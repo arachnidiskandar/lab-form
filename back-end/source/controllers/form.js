@@ -69,8 +69,12 @@ forms.get = async (req, res) => {
 
 forms.all = async (req, res) => {
 	try {
-		const result = await database.ref('forms').once('value')
-		res.status(200).json(Object.values(result.val()))
+		const result = await database.ref('forms').once('value'), items = []
+		Object.entries(result.val()).forEach(([key, value]) => {
+			value.id = key
+			items.push(value)
+		})
+		res.status(200).json(items)
 	} catch (error) {
 		res.status(500).send(error.message)
 	}

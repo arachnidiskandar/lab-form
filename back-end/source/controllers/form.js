@@ -61,7 +61,7 @@ forms.get = async (req, res) => {
 		const result = id.match(Utils.shortUrlMatch) ?
 			await database.ref('forms').orderByChild('share').equalTo(id).once('value') :
 			await database.ref('forms').child(id).once('value')
-		res.status(200).json(result)
+		res.status(200).json(result.val())
 	} catch (error) {
 		res.status(500).send(error.message)
 	}
@@ -70,7 +70,7 @@ forms.get = async (req, res) => {
 forms.all = async (req, res) => {
 	try {
 		const result = await database.ref('forms').once('value')
-		res.status(200).json(result)
+		res.status(200).json(Object.values(result.val()))
 	} catch (error) {
 		res.status(500).send(error.message)
 	}
@@ -148,7 +148,7 @@ forms.answers = async (req, res, next) => {
 	const { form } = req.params
 	try {
 		const result = await database.ref('answers').orderByChild('form').equalTo(form).once('value')
-		res.status(201).json(result)
+		res.status(200).json(result.val())
 	} catch (error) {
 		res.status(500).send(error.message)
 	}

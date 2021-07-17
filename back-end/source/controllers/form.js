@@ -3,6 +3,7 @@ const Joi = require('joi')
 const firebase = require('../database.js')
 const Answer = require('../models/answer.js')
 const Form = require('../models/form.js')
+const Utils = require('../utils.js')
 
 let database = firebase.database()
 const forms = {}
@@ -57,7 +58,9 @@ forms.create = async (req, res, next) => {
 forms.get = async (req, res) => {
 	const { id } = req.params
 	try {
-		const result = await database.ref('forms').child(id).once('value')
+		const result = id.match(Utils.shortUrlMatch) ?
+			await database.ref('forms').orderByChild('share').equalTo(id).once('value') :
+			await database.ref('forms').child(id).once('value')
 		res.status(200).json(result)
 	} catch (error) {
 		res.status(500).send(error.message)
@@ -146,6 +149,27 @@ forms.answers = async (req, res, next) => {
 	try {
 		const result = await database.ref('answers').orderByChild('form').equalTo(form).once('value')
 		res.status(201).json(result)
+	} catch (error) {
+		res.status(500).send(error.message)
+	}
+}
+
+forms.share = async (req, res, next) => {
+	const { error } = Joi.object({
+		form: Joi.string().required().label('form'),
+	}).validate(req.params)
+	if (error) {
+		res.status(400).json({ message: error.details[0].message })
+		return next()
+	}
+
+	const { form } = req.params
+	try {
+		const ref = await database.ref('forms').child(form).once('value')
+		const obj = Object.assign(new Form(), ref.val())
+		obj.share = Utils.shortUrl()
+		const result = await database.ref('forms').child(form).set(obj)
+		res.status(200).json(obj)
 	} catch (error) {
 		res.status(500).send(error.message)
 	}

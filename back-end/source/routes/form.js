@@ -10,6 +10,7 @@ router.put('/:id', Form.update)
 router.delete('/delete', Form.remove)
 router.post('/submit', Form.submit)
 router.get('/answers/:form', Form.answers)
+router.get('/share/:form', Form.share)
 
 module.exports = {
 	routes: router

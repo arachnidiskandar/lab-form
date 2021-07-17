@@ -1,0 +1,52 @@
+import React from 'react';
+
+import { Card, CardContent, Button, Typography, Snackbar } from '@material-ui/core';
+import { styled } from '@material-ui/core/styles';
+import Share from '@material-ui/icons/Share';
+import Edit from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+
+const StyledSurvey = styled(Card)({
+  margin: '15px 0',
+  '& .MuiCardContent-root': {
+    display: 'flex',
+    '& div:first-child': {
+      flexBasis: '70%',
+    },
+    '& div:last-child': {
+      display: 'flex',
+      justifyContent: 'space-around',
+      flexBasis: '30%',
+    },
+  },
+});
+const Survey = ({ data, onDeleteClick }) => {
+  return (
+    <StyledSurvey>
+      <CardContent>
+        <div>
+          <Typography variant="h6">{data.title}</Typography>
+        </div>
+        <div>
+          <Button variant="contained" size="small" color="primary" startIcon={<Share />}>
+            Copiar link
+          </Button>
+          <Button variant="contained" size="small" color="primary" startIcon={<Edit />}>
+            Editar
+          </Button>
+          <Button
+            onClick={() => onDeleteClick(data.id)}
+            variant="contained"
+            size="small"
+            color="secondary"
+            startIcon={<DeleteIcon />}
+          >
+            Excluir
+          </Button>
+        </div>
+      </CardContent>
+    </StyledSurvey>
+  );
+};
+
+export default Survey;

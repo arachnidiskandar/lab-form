@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 
-import { Card, CardContent, TextField, Button, Container, Typography } from '@material-ui/core';
+import { Card, CardContent, Button, Container, Typography } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
 import { styled } from '@material-ui/core/styles';
+import axios from 'axios';
 import Question from './Question';
+import Toaster from '../../shared/Toaster';
 
 const PageContainer = styled(Container)({
   padding: '20px 0',
@@ -39,14 +41,20 @@ const mockSurvey = {
 };
 const AnswerSurvey = () => {
   const [survey, setSurvey] = useState(mockSurvey);
+  const [toasterState, setToasterState] = useState(null);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      const response = await axios.post('/forms/create', data);
+      setToasterState({ message: 'Enviado com sucesso', type: 'success' });
+    } catch (error) {
+      setToasterState({ error, type: 'error' });
+    }
   };
 
   return (
@@ -65,6 +73,7 @@ const AnswerSurvey = () => {
           Finalizar questionário
         </Button>
       </form>
+      <Toaster toasterState={toasterState} onClose={() => setToasterState({ open: false })} />
     </PageContainer>
   );
 };

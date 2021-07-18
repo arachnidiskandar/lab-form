@@ -3,7 +3,7 @@ import { Card, CardContent, TextField, Button, Container, Typography } from '@ma
 import { styled } from '@material-ui/core/styles';
 
 export const QUESTION_TYPE = {
-  text: 'text',
+  SINGLE_TEXTBOX: 'SINGLE_TEXTBOX',
 };
 
 const StyledQuestion = styled(Card)({

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Card, CardContent, Button, Container, Typography } from '@material-ui/core';
-import { useForm } from 'react-hook-form';
+import { useLocation } from 'react-router-dom';
+import { get, useForm } from 'react-hook-form';
 import { styled } from '@material-ui/core/styles';
 import axios from 'axios';
-import Question from './Question';
+import Question, { QUESTION_TYPE } from './Question';
 import Toaster from '../../shared/Toaster';
 
 const PageContainer = styled(Container)({
@@ -16,59 +17,64 @@ const PageContainer = styled(Container)({
   '& .MuiButton-containedPrimary': {
     alignSelf: 'flex-end',
   },
+  '& .questions-container': {
+    marginTop: '5vh',
+  },
 });
 
-const mockSurvey = {
-  title: 'Título Mockado',
-  description: 'descrição Mockada',
-  questions: [
-    {
-      id: 1,
-      questionTitle: 'Pergunta 1',
-      questionType: 'text',
-    },
-    {
-      id: 2,
-      questionTitle: 'Pergunta 2',
-      questionType: 'text',
-    },
-    {
-      id: 3,
-      questionTitle: 'Pergunta 3',
-      questionType: 'text',
-    },
-  ],
-};
 const AnswerSurvey = () => {
-  const [survey, setSurvey] = useState(mockSurvey);
-  const [toasterState, setToasterState] = useState(null);
+  const [survey, setSurvey] = useState(null);
+  const [toasterState, setToasterState] = useState({ open: false });
+  const { pathname } = useLocation();
+  const surveyId = pathname.split('/')[2];
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  const getSurvey = async (id) => {
     try {
-      const response = await axios.post('/forms/create', data);
-      setToasterState({ message: 'Enviado com sucesso', type: 'success' });
+      const response = await axios.get(`/forms/${id}`);
+      setSurvey(response.data);
     } catch (error) {
-      setToasterState({ error, type: 'error' });
+      setToasterState({ open: true, message: error.message, type: error });
+    }
+  };
+  useEffect(() => {
+    getSurvey(surveyId);
+  }, []);
+
+  const onSubmit = async (data) => {
+    const responses = Object.values(data);
+    const formatedForm = { form: surveyId };
+    formatedForm.answers = survey.questions.map((question, index) => ({
+      type: QUESTION_TYPE[question.type],
+      content: responses[index],
+    }));
+    try {
+      await axios.post('/forms/submit', formatedForm);
+      setToasterState({ open: true, message: 'Questionário respondido', type: 'success' });
+    } catch (error) {
+      setToasterState({ open: true, message: error.message, type: 'error' });
     }
   };
 
   return (
     <PageContainer>
       <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
-        <Card>
-          <CardContent>
-            <Typography variant="h3">{survey.title}</Typography>
-            <Typography variant="subtitle1">{survey.description}</Typography>
-          </CardContent>
-        </Card>
-        {survey.questions.map((question) => {
-          return <Question key={question.id} question={question} register={register} error={errors} />;
-        })}
+        <Typography variant="h3">{survey?.title}</Typography>
+        <Typography variant="subtitle1">{survey?.description}</Typography>
+        <div className="questions-container">
+          {survey &&
+            survey.questions.map((question, index) => {
+              return (
+                <Question key={question.title} index={index} question={question} register={register} error={errors} />
+              );
+            })}
+        </div>
+
         <Button type="submit" variant="contained" size="large" color="primary">
           Finalizar questionário
         </Button>

@@ -18,8 +18,7 @@ const submitSchema = Joi.object({
 	form: Joi.string().required().label('form'),
 	answers: Joi.array().min(1).required().items(
 		Joi.object({
-			id: Joi.string().required().label('id'),
-			type: Joi.string().valid('CHECKBOXES', 'DROPDOWN', 'SINGLE_TEXTBOX').label('type'),
+			type: Joi.string().valid('CHECKBOXES', 'DROPDOWN', 'text').label('type'),
 			content: Joi.when('type', {
 				is: Joi.string().equal('CHECKBOXES'),
 				then: Joi.array().min(2).items(Joi.boolean()).required(),

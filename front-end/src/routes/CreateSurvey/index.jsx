@@ -32,7 +32,7 @@ const PageContainer = styled(Container)({
   },
 });
 
-const CreateForm = () => {
+const CreateSurvey = () => {
   const [openModal, setOpenModal] = useState(false);
   const [errorState, setErrorState] = useState(null);
 
@@ -133,4 +133,4 @@ const CreateForm = () => {
   );
 };
 
-export default CreateForm;
+export default CreateSurvey;

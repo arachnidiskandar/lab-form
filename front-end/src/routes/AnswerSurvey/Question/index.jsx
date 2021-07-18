@@ -2,16 +2,20 @@ import React from 'react';
 import { Card, CardContent, TextField, Button, Container, Typography } from '@material-ui/core';
 import { styled } from '@material-ui/core/styles';
 
+export const QUESTION_TYPE = {
+  text: 'text',
+};
+
 const StyledQuestion = styled(Card)({
   margin: '15px 0',
 });
-const Question = ({ question, register, error }) => {
+const Question = ({ question, register, error, index }) => {
   return (
     <StyledQuestion>
       <CardContent>
-        <Typography variant="h5">{question.questionTitle}</Typography>
+        <Typography variant="h5">{question.title}</Typography>
         <TextField
-          error={error && !!error[`question${question.id}`]}
+          error={error && !!error[`question${index}`]}
           margin="normal"
           fullWidth
           multiline
@@ -19,8 +23,8 @@ const Question = ({ question, register, error }) => {
           label="Resposta"
           type="text"
           required
-          helperText={error && error[`question${question.id}`]?.message}
-          {...register(`question${question.id}`, { required: 'Resposta Obrigatória' })}
+          helperText={error && error[`question${index}`]?.message}
+          {...register(`question${index}`, { required: 'Resposta Obrigatória' })}
         />
       </CardContent>
     </StyledQuestion>

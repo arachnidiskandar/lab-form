@@ -1,17 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, TextField, Button, Container, Typography } from '@material-ui/core';
 import { styled } from '@material-ui/core/styles';
+import axios from 'axios';
 import Survey from './Survey';
 import ModalDelete from './ModalDelete';
 import Toaster from '../../shared/Toaster';
-
-const mockSurveys = [
-  { title: 'título 1', id: 1 },
-  { title: 'título 2', id: 2 },
-  { title: 'título 3', id: 3 },
-  { title: 'título 4', id: 4 },
-  { title: 'título 5', id: 5 },
-];
 
 const PageContainer = styled(Container)({
   padding: '20px 0',
@@ -20,7 +13,7 @@ const PageContainer = styled(Container)({
   },
 });
 const ViewSurveys = () => {
-  const [surveys, setSurveys] = useState(mockSurveys);
+  const [surveys, setSurveys] = useState(null);
   const [modalDeleteState, setModalDeleteState] = useState({ open: false });
   const [toasterState, setToasterState] = useState({ open: false });
 
@@ -29,20 +22,48 @@ const ViewSurveys = () => {
   };
 
   const closeModalDelete = () => setModalDeleteState({ open: false });
+
   const closeToaster = () => setToasterState({ open: false });
 
-  const handleDeleteSurvey = () => {
-    setSurveys((prevState) => prevState.filter((survey) => survey.id !== modalDeleteState.id));
-    closeModalDelete();
+  const handleDeleteSurvey = async () => {
+    try {
+      await axios.delete('/forms/delete', { data: { id: modalDeleteState.id } });
+      setSurveys((prevState) => prevState.filter((survey) => survey.id !== modalDeleteState.id));
+      closeModalDelete();
+      setToasterState({ open: true, message: 'Questionário Deletado', type: 'success' });
+    } catch (error) {
+      setToasterState({ open: true, message: error.message, type: 'error' });
+    }
   };
 
+  const getAllSurveys = async () => {
+    try {
+      const response = await axios.get('/forms');
+      setSurveys(response.data);
+    } catch (error) {
+      setToasterState({ open: true, message: error.message, type: error });
+    }
+  };
+
+  const copyLink = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setToasterState({ open: true, message: 'Link copiado', type: 'success' });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  useEffect(() => {
+    getAllSurveys();
+  }, []);
   return (
     <PageContainer>
       <Typography variant="h4">Meus questionários</Typography>
       <div className="survey-list">
-        {surveys.map((surveyData) => (
-          <Survey id={surveyData.id} data={surveyData} onDeleteClick={handleModalDelete} />
-        ))}
+        {surveys &&
+          surveys.map((surveyData) => (
+            <Survey key={surveyData.id} data={surveyData} onDeleteClick={handleModalDelete} onCopy={copyLink} />
+          ))}
       </div>
       <ModalDelete
         open={modalDeleteState.open}

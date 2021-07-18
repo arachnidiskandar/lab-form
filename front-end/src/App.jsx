@@ -2,11 +2,12 @@ import React from 'react';
 import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 
 import ViewSurveys from './routes/ViewSurveys';
 import AnswerSurvey from './routes/AnswerSurvey';
-import CreateForm from './routes/CreateForm';
+import CreateSurvey from './routes/CreateSurvey';
+import EditSurvey from './routes/EditSurvey';
 
 function App() {
   return (
@@ -15,9 +16,13 @@ function App() {
       <Container>
         <Router>
           <Switch>
-            <Route path="/criar-questionario" render={() => <CreateForm />} />
-            <Route path="/responder-questionario" render={() => <AnswerSurvey />} />
+            <Route exact path="/">
+              <Redirect to="/visualizar-questionarios" />
+            </Route>
+            <Route path="/criar-questionario" render={() => <CreateSurvey />} />
+            <Route path="/responder-questionario/:id" render={() => <AnswerSurvey />} />
             <Route path="/visualizar-questionarios" render={() => <ViewSurveys />} />
+            <Route path="/editar-questionario/:id" render={() => <EditSurvey />} />
           </Switch>
         </Router>
       </Container>

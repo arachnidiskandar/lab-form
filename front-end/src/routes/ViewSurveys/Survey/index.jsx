@@ -20,7 +20,7 @@ const StyledSurvey = styled(Card)({
     },
   },
 });
-const Survey = ({ data, onDeleteClick }) => {
+const Survey = ({ data, onDeleteClick, onCopy }) => {
   return (
     <StyledSurvey>
       <CardContent>
@@ -28,7 +28,13 @@ const Survey = ({ data, onDeleteClick }) => {
           <Typography variant="h6">{data.title}</Typography>
         </div>
         <div>
-          <Button variant="contained" size="small" color="primary" startIcon={<Share />}>
+          <Button
+            onClick={() => onCopy(`localhost:3000/responder-questionario/${data.id}`)}
+            variant="contained"
+            size="small"
+            color="primary"
+            startIcon={<Share />}
+          >
             Copiar link
           </Button>
           <Button variant="contained" size="small" color="primary" startIcon={<Edit />}>

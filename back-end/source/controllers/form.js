@@ -11,7 +11,7 @@ const forms = {}
 const schema = Joi.object({
 	title: Joi.string().required().label('title'),
 	description: Joi.string().label('description'),
-	questions: Joi.array().min(1).required().label('questions'),
+	questions: Joi.array().min(1).label('questions'),
 })
 
 const submitSchema = Joi.object({
@@ -87,15 +87,15 @@ forms.update = async (req, res, next) => {
 	}
 
 	const { id } = req.params
-	const { title, description = null, questions } = req.body
-	const form = new Form(
-		title,
-		description,
-		questions,
-	)
+	const { title, description = null, questions = null} = req.body
 	try {
-		const result = await database.ref('forms').child(id).set(form)
-		res.status(204).json(result)
+		const ref = await database.ref('forms').child(id).once('value')
+		const obj = Object.assign(new Form(), ref.val())
+		obj.title = title
+		obj.description = (description != null) ? description : null
+		if (questions != null) obj.questions = questions
+		const result = await database.ref('forms').child(id).set(obj)
+		res.status(200).json(obj)
 	} catch (error) {
 		res.status(500).send(error.message)
 	}

@@ -151,7 +151,11 @@ forms.answers = async (req, res, next) => {
 	const { form } = req.params
 	try {
 		const result = await database.ref('answers').orderByChild('form').equalTo(form).once('value')
-		res.status(200).json(result.val())
+		items = []
+		Object.entries(result.val()).forEach(([key, value]) => {
+			items.push(value['answers'])
+		})
+		res.status(200).json(items)
 	} catch (error) {
 		res.status(500).send(error.message)
 	}

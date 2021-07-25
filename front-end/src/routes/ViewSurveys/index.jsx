@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, TextField, Button, Container, Typography } from '@material-ui/core';
+import { Container, Typography } from '@material-ui/core';
+
 import { styled } from '@material-ui/core/styles';
 import axios from 'axios';
 import Survey from './Survey';
@@ -38,8 +39,8 @@ const ViewSurveys = () => {
 
   const getAllSurveys = async () => {
     try {
-      const response = await axios.get('/forms');
-      setSurveys(response.data);
+      const { data } = await axios.get('/forms');
+      setSurveys(data);
     } catch (error) {
       setToasterState({ open: true, message: error.message, type: error });
     }

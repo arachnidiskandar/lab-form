@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
-import { Card, CardContent, Button, Container, Typography } from '@material-ui/core';
+import { Button, Container, Typography } from '@material-ui/core';
 import { useLocation } from 'react-router-dom';
-import { get, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { styled } from '@material-ui/core/styles';
 import axios from 'axios';
 import Question, { QUESTION_TYPE } from './Question';
@@ -36,8 +36,8 @@ const AnswerSurvey = () => {
 
   const getSurvey = async (id) => {
     try {
-      const response = await axios.get(`/forms/${id}`);
-      setSurvey(response.data);
+      const { data } = await axios.get(`/forms/${id}`);
+      setSurvey(data);
     } catch (error) {
       setToasterState({ open: true, message: error.message, type: error });
     }
@@ -53,6 +53,7 @@ const AnswerSurvey = () => {
       type: QUESTION_TYPE[question.type],
       content: responses[index],
     }));
+    console.log(formatedForm);
     try {
       await axios.post('/forms/submit', formatedForm);
       setToasterState({ open: true, message: 'Questionário respondido', type: 'success' });

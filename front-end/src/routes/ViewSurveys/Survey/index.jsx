@@ -5,6 +5,7 @@ import { styled } from '@material-ui/core/styles';
 import Share from '@material-ui/icons/Share';
 import Edit from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
+import { useHistory } from 'react-router-dom';
 
 const StyledSurvey = styled(Card)({
   margin: '15px 0',
@@ -21,6 +22,11 @@ const StyledSurvey = styled(Card)({
   },
 });
 const Survey = ({ data, onDeleteClick, onCopy }) => {
+  const history = useHistory();
+
+  const handleEditClick = () => {
+    history.push(`/editar-questionario/${data.id}`);
+  };
   return (
     <StyledSurvey>
       <CardContent>
@@ -37,7 +43,13 @@ const Survey = ({ data, onDeleteClick, onCopy }) => {
           >
             Copiar link
           </Button>
-          <Button variant="contained" size="small" color="primary" startIcon={<Edit />}>
+          <Button
+            variant="contained"
+            size="small"
+            color="primary"
+            startIcon={<Edit />}
+            onClick={() => handleEditClick()}
+          >
             Editar
           </Button>
           <Button

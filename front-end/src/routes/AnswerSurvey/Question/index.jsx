@@ -4,6 +4,7 @@ import { styled } from '@material-ui/core/styles';
 
 export const QUESTION_TYPE = {
   SINGLE_TEXTBOX: 'SINGLE_TEXTBOX',
+  text: 'SINGLE_TEXTBOX',
 };
 
 const StyledQuestion = styled(Card)({

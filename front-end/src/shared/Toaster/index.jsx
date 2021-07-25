@@ -5,7 +5,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 
 const Toaster = ({ toasterState, onClose }) => {
   return (
-    <Snackbar open={toasterState.open} autoHideDuration={4000}>
+    <Snackbar open={toasterState.open} autoHideDuration={4000} onClose={onClose}>
       <Alert onClose={onClose} severity={toasterState?.type} elevation={6} variant="filled">
         {toasterState.message}
       </Alert>

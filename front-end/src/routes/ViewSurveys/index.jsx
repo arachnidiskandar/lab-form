@@ -6,6 +6,8 @@ import axios from 'axios';
 import Survey from './Survey';
 import ModalDelete from './ModalDelete';
 import Toaster from '../../shared/Toaster';
+import useFetch from '../../hooks/UseFetch';
+import LoadingBar from '../../shared/LoadingBar';
 
 const PageContainer = styled(Container)({
   padding: '20px 0',
@@ -13,8 +15,10 @@ const PageContainer = styled(Container)({
     marginTop: '10vh',
   },
 });
+
 const ViewSurveys = () => {
-  const [surveys, setSurveys] = useState(null);
+  const [loading, surveys] = useFetch('/forms');
+  const [surveysState, setSurveysState] = useState(surveys);
   const [modalDeleteState, setModalDeleteState] = useState({ open: false });
   const [toasterState, setToasterState] = useState({ open: false });
 
@@ -29,20 +33,11 @@ const ViewSurveys = () => {
   const handleDeleteSurvey = async () => {
     try {
       await axios.delete('/forms/delete', { data: { id: modalDeleteState.id } });
-      setSurveys((prevState) => prevState.filter((survey) => survey.id !== modalDeleteState.id));
+      setSurveysState((prevState) => prevState.filter((survey) => survey.id !== modalDeleteState.id));
       closeModalDelete();
       setToasterState({ open: true, message: 'Questionário Deletado', type: 'success' });
     } catch (error) {
       setToasterState({ open: true, message: error.message, type: 'error' });
-    }
-  };
-
-  const getAllSurveys = async () => {
-    try {
-      const { data } = await axios.get('/forms');
-      setSurveys(data);
-    } catch (error) {
-      setToasterState({ open: true, message: error.message, type: error });
     }
   };
 
@@ -54,25 +49,29 @@ const ViewSurveys = () => {
       console.error(err);
     }
   };
+
   useEffect(() => {
-    getAllSurveys();
-  }, []);
+    setSurveysState(surveys);
+  }, [surveys]);
   return (
-    <PageContainer>
-      <Typography variant="h4">Meus questionários</Typography>
-      <div className="survey-list">
-        {surveys &&
-          surveys.map((surveyData) => (
-            <Survey key={surveyData.id} data={surveyData} onDeleteClick={handleModalDelete} onCopy={copyLink} />
-          ))}
-      </div>
-      <ModalDelete
-        open={modalDeleteState.open}
-        handleClose={() => closeModalDelete()}
-        handleConfirm={() => handleDeleteSurvey()}
-      />
-      <Toaster toasterState={toasterState} onClose={closeToaster} />
-    </PageContainer>
+    <>
+      <PageContainer>
+        <Typography variant="h4">Meus questionários</Typography>
+        <div className="survey-list">
+          {surveysState &&
+            surveysState.map((surveyData) => (
+              <Survey key={surveyData.id} data={surveyData} onDeleteClick={handleModalDelete} onCopy={copyLink} />
+            ))}
+        </div>
+        <ModalDelete
+          open={modalDeleteState.open}
+          handleClose={() => closeModalDelete()}
+          handleConfirm={() => handleDeleteSurvey()}
+        />
+        <Toaster toasterState={toasterState} onClose={closeToaster} />
+      </PageContainer>
+      {loading && <LoadingBar isLoadingFinished={loading} />}
+    </>
   );
 };
 

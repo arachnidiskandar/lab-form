@@ -53,7 +53,6 @@ const AnswerSurvey = () => {
       type: QUESTION_TYPE[question.type],
       content: responses[index],
     }));
-    console.log(formatedForm);
     try {
       await axios.post('/forms/submit', formatedForm);
       setToasterState({ open: true, message: 'Questionário respondido', type: 'success' });
@@ -63,25 +62,27 @@ const AnswerSurvey = () => {
   };
 
   return (
-    <PageContainer>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
-        <Typography variant="h3">{survey?.title}</Typography>
-        <Typography variant="subtitle1">{survey?.description}</Typography>
-        <div className="questions-container">
-          {survey &&
-            survey.questions.map((question, index) => {
-              return (
-                <Question key={question.title} index={index} question={question} register={register} error={errors} />
-              );
-            })}
-        </div>
+    <>
+      <PageContainer>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
+          <Typography variant="h3">{survey?.title}</Typography>
+          <Typography variant="subtitle1">{survey?.description}</Typography>
+          <div className="questions-container">
+            {survey &&
+              survey.questions.map((question, index) => {
+                return (
+                  <Question key={question.title} index={index} question={question} register={register} error={errors} />
+                );
+              })}
+          </div>
 
-        <Button type="submit" variant="contained" size="large" color="primary">
-          Finalizar questionário
-        </Button>
-      </form>
-      <Toaster toasterState={toasterState} onClose={() => setToasterState({ open: false })} />
-    </PageContainer>
+          <Button type="submit" variant="contained" size="large" color="primary">
+            Finalizar questionário
+          </Button>
+        </form>
+        <Toaster toasterState={toasterState} onClose={() => setToasterState({ open: false })} />
+      </PageContainer>
+    </>
   );
 };
 

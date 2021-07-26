@@ -1,6 +1,8 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
 
-import { Card, CardContent, Button, Typography, Snackbar } from '@material-ui/core';
+import { Card, CardContent, Button, Typography } from '@material-ui/core';
 import { styled } from '@material-ui/core/styles';
 import Share from '@material-ui/icons/Share';
 import Edit from '@material-ui/icons/Edit';
@@ -13,6 +15,7 @@ const StyledSurvey = styled(Card)({
     display: 'flex',
     '& div:first-child': {
       flexBasis: '70%',
+      cursor: 'pointer',
     },
     '& div:last-child': {
       display: 'flex',
@@ -27,10 +30,13 @@ const Survey = ({ data, onDeleteClick, onCopy }) => {
   const handleEditClick = () => {
     history.push(`/editar-questionario/${data.id}`);
   };
+  const handleViewAnswersClick = () => {
+    history.push(`/visualizar-respostas/${data.id}`);
+  };
   return (
     <StyledSurvey>
       <CardContent>
-        <div>
+        <div onClick={() => handleViewAnswersClick()}>
           <Typography variant="h6">{data.title}</Typography>
         </div>
         <div>

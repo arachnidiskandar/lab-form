@@ -33,7 +33,10 @@ const AnswersList = ({ question }) => {
   const [maxAnswersSize, setMaxAnswersSize] = useState(null);
 
   useEffect(() => {
-    const size = question.content.length;
+    if (!question) {
+      return;
+    }
+    const size = question.answers.length;
     if (size > 10) {
       setMaxAnswersSize(10);
     } else {
@@ -51,12 +54,14 @@ const AnswersList = ({ question }) => {
     if (maxAnswersSize > 5) {
       return (
         <>
-          <List>{answers.slice(0, 5).map((answer) => renderAnswer(answer))}</List>
-          {showMore && <List>{answers.slice(5, maxAnswersSize + 1).map((answer) => renderAnswer(answer))}</List>}
+          <List>{answers.slice(0, 5).map((answer) => renderAnswer(answer.content))}</List>
+          {showMore && (
+            <List>{answers.slice(5, maxAnswersSize + 1).map((answer) => renderAnswer(answer.content))}</List>
+          )}
         </>
       );
     }
-    return answers.map((answer) => renderAnswer(answer));
+    return <List>{answers.map((answer) => renderAnswer(answer.content))}</List>;
   };
   return (
     <Card>
@@ -75,7 +80,7 @@ const AnswersList = ({ question }) => {
           </CheckboxContainer>
         )}
         <AnswersListContainer showMore={showMore}>
-          {question && renderAnswersList(question.content)}
+          {question && renderAnswersList(question.answers)}
         </AnswersListContainer>
       </CardContent>
     </Card>

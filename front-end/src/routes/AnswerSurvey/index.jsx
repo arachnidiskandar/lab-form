@@ -32,6 +32,7 @@ const AnswerSurvey = () => {
     register,
     handleSubmit,
     formState: { errors },
+    control,
   } = useForm();
 
   const getSurvey = async (id) => {
@@ -47,6 +48,7 @@ const AnswerSurvey = () => {
   }, []);
 
   const onSubmit = async (data) => {
+    console.log(data);
     const responses = Object.values(data);
     const formatedForm = { form: surveyId };
     formatedForm.answers = survey.questions.map((question, index) => ({
@@ -71,7 +73,15 @@ const AnswerSurvey = () => {
             {survey &&
               survey.questions.map((question, index) => {
                 return (
-                  <Question key={question.title} index={index} question={question} register={register} error={errors} />
+                  <Question
+                    key={question.questionTitle}
+                    index={index}
+                    question={question}
+                    register={register}
+                    error={errors}
+                    options={question.options}
+                    control={control}
+                  />
                 );
               })}
           </div>

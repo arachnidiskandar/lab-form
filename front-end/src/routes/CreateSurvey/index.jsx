@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, TextField, Button, Container, Typography, Snackbar } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { styled } from '@material-ui/core/styles';
@@ -42,6 +42,8 @@ const CreateSurvey = () => {
     control,
     formState: { errors },
     setError,
+    setValue,
+    getValues,
     clearErrors,
   } = useForm({
     defaultValues: {
@@ -52,8 +54,8 @@ const CreateSurvey = () => {
     control,
     name: 'questions',
   });
-
   const onSubmit = async (data) => {
+    console.log(data);
     if (data.questions.length === 0) {
       setError('questions', { message: 'É necessário pelo menos uma pergunta' });
       return;
@@ -69,7 +71,15 @@ const CreateSurvey = () => {
   const addQuestion = () => {
     clearErrors('questions.message');
     clearErrors('questions.ref');
-    append({ questionTitle: '', questionType: '' });
+    append({ questionTitle: '', questionType: '', options: [] });
+  };
+
+  const copyLink = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

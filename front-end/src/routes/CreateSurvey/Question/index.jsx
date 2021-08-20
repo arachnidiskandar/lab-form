@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import DeleteOutline from '@material-ui/icons/DeleteOutline';
 import { styled } from '@material-ui/core/styles';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useWatch } from 'react-hook-form';
 import Options from './Option';
 import { QUESTION_TYPE } from '../../AnswerSurvey/Question';
 
@@ -36,13 +36,24 @@ const StyledTitleTypeContainer = styled('div')({
   },
 });
 
-const Question = ({ register, item, index, control, deleteQuestion, error }) => {
+const Question = ({
+  register,
+  item,
+  index,
+  control,
+  deleteQuestion,
+  error,
+  watch,
+  setError,
+  clearErrors,
+  getValues,
+}) => {
   const [questionType, setQuestionType] = useState(QUESTION_TYPE.SINGLE_TEXTBOX);
   const { fields, remove, append } = useFieldArray({
     control,
     name: `questions.${index}.options`,
   });
-
+  // const const [options, setOptions] = useState(initialState);
   const handleQuestionTypeChange = (type) => {
     setQuestionType(type);
     if (type === QUESTION_TYPE.SINGLE_TEXTBOX) {
@@ -51,6 +62,18 @@ const Question = ({ register, item, index, control, deleteQuestion, error }) => 
     }
     if (fields.length === 0) {
       append([{ optionValue: '' }, { optionValue: '' }]);
+    }
+  };
+
+  const uniqueFieldsValidator = () => {
+    const options = getValues(`questions.${index}.options`).map((option) => option.optionValue);
+    if (options[0] === '' && options[1] === '') {
+      return;
+    }
+    if (new Set(options).size !== options.length) {
+      setError(`questions.${index}.options`, { message: 'Uma ou mais opções iguais' });
+    } else {
+      clearErrors(`questions.${index}.options`);
     }
   };
 
@@ -64,20 +87,20 @@ const Question = ({ register, item, index, control, deleteQuestion, error }) => 
             rules={{ required: 'Campo Obrigatório' }}
             render={({ field }) => (
               <TextField
-                error={error && !!error[index]?.questionTitle}
+                error={error && !!error?.[index]?.questionTitle}
                 defaultValue={`${item.questionTitle}`}
                 margin="normal"
                 fullWidth
                 variant="outlined"
                 label="Título da pergunta"
                 required
-                helperText={error && error[index]?.questionTitle?.message}
+                helperText={error && error?.[index]?.questionTitle?.message}
                 {...field}
               />
             )}
           />
 
-          <FormControl margin="normal" required variant="outlined" error={error && error[index]?.questionType}>
+          <FormControl margin="normal" required variant="outlined" error={error && error?.[index]?.questionType}>
             <InputLabel id="select-type-question">Tipo da resposta</InputLabel>
             <Select
               defaultValue={`${item.questionType}`}
@@ -91,8 +114,8 @@ const Question = ({ register, item, index, control, deleteQuestion, error }) => 
               <MenuItem value={QUESTION_TYPE.MULTIPLE_CHOICES}>Escolha múltipla</MenuItem>
               <MenuItem value={QUESTION_TYPE.CHECKBOXES}>Caixas de verificação</MenuItem>
             </Select>
-            {error && error[index]?.questionType && (
-              <FormHelperText>{error[index]?.questionType?.message}</FormHelperText>
+            {error && error?.[index]?.questionType && (
+              <FormHelperText>{error?.[index]?.questionType?.message}</FormHelperText>
             )}
           </FormControl>
         </StyledTitleTypeContainer>
@@ -103,11 +126,12 @@ const Question = ({ register, item, index, control, deleteQuestion, error }) => 
                 key={option.id}
                 type={questionType}
                 register={register}
-                option={option}
                 control={control}
                 name={`questions.${index}.options.${nestIndex}.optionValue`}
-                error={error && error[index]?.options[nestIndex]?.optionValue?.message}
+                error={error && error?.[index]?.options?.[nestIndex]?.optionValue?.message}
                 removeMethod={() => remove(nestIndex)}
+                checkEqualOptionCb={uniqueFieldsValidator}
+                watch={watch}
               />
             ))}
             <div>
@@ -117,6 +141,7 @@ const Question = ({ register, item, index, control, deleteQuestion, error }) => 
             </div>
           </div>
         )}
+        {error && <FormHelperText error>{error?.[index]?.options?.message}</FormHelperText>}
       </CardContent>
       <CardActions>
         <Button

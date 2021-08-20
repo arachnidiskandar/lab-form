@@ -22,7 +22,12 @@ const StyledOption = styled('div')({
   },
 });
 
-const MultipleChoice = ({ type, register, name, option, control, error, removeMethod }) => {
+const MultipleChoice = ({ type, name, control, error, removeMethod, checkEqualOptionCb, watch }) => {
+  const watchedValue = watch(name);
+  useEffect(() => {
+    // setValue(name, watchedValue);
+    checkEqualOptionCb();
+  }, [watchedValue]);
   return (
     <StyledOption>
       {type === QUESTION_TYPE.MULTIPLE_CHOICES ? <RadioButtonUncheckedIcon /> : <CheckBoxOutlineBlankIcon />}

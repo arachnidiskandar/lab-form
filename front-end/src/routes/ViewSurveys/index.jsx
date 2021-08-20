@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography } from '@material-ui/core';
+import { Button, Container, Typography } from '@material-ui/core';
+import { useHistory } from 'react-router-dom';
 
 import { styled } from '@material-ui/core/styles';
 import axios from 'axios';
@@ -16,11 +17,20 @@ const PageContainer = styled(Container)({
   },
 });
 
+const NoSurveyCreatedContainer = styled('div')({
+  textAlign: 'center',
+  marginTop: '5vh',
+  '& h5': {
+    marginBottom: '20px',
+  },
+});
+
 const ViewSurveys = () => {
   const [loading, surveys] = useFetch('/forms');
   const [surveysState, setSurveysState] = useState(surveys);
   const [modalDeleteState, setModalDeleteState] = useState({ open: false });
   const [toasterState, setToasterState] = useState({ open: false });
+  const history = useHistory();
 
   const handleModalDelete = (id) => {
     setModalDeleteState({ open: true, id });
@@ -57,12 +67,18 @@ const ViewSurveys = () => {
     <>
       <PageContainer>
         <Typography variant="h4">Meus questionários</Typography>
-        <div className="survey-list">
+        {/* <div className="survey-list">
           {surveysState &&
             surveysState.map((surveyData) => (
               <Survey key={surveyData.id} data={surveyData} onDeleteClick={handleModalDelete} onCopy={copyLink} />
             ))}
-        </div>
+        </div> */}
+        <NoSurveyCreatedContainer>
+          <Typography variant="h5">Você ainda não tem nenhum questionário criado</Typography>
+          <Button variant="contained" color="primary" onClick={() => history.push('/criar-questionario')}>
+            Criar Questionário
+          </Button>
+        </NoSurveyCreatedContainer>
         <ModalDelete
           open={modalDeleteState.open}
           handleClose={() => closeModalDelete()}

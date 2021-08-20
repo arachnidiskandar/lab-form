@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, TextField, Button, Container, Typography, Snackbar } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { styled } from '@material-ui/core/styles';
 import { useForm, useFieldArray } from 'react-hook-form';
 import Alert from '@material-ui/lab/Alert';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 import Question from './Question';
 import ModalShare from './ModalShare';
 
@@ -33,8 +34,9 @@ const PageContainer = styled(Container)({
 });
 
 const CreateSurvey = () => {
-  const [openModal, setOpenModal] = useState(false);
+  const [modalShareState, setModalShareState] = useState({ open: false, link: '' });
   const [errorState, setErrorState] = useState(null);
+  const history = useHistory();
 
   const {
     register,
@@ -42,7 +44,8 @@ const CreateSurvey = () => {
     control,
     formState: { errors },
     setError,
-    setValue,
+    watch,
+    reset,
     getValues,
     clearErrors,
   } = useForm({
@@ -55,14 +58,16 @@ const CreateSurvey = () => {
     name: 'questions',
   });
   const onSubmit = async (data) => {
-    console.log(data);
     if (data.questions.length === 0) {
       setError('questions', { message: 'É necessário pelo menos uma pergunta' });
       return;
     }
     try {
       const response = await axios.post('/forms/create', data);
-      setOpenModal(true);
+      const shareLink = `localhost:3000/responder-questionario/${response.data.split('/')[4]}`;
+      setModalShareState({ open: true, link: shareLink });
+      // history.push('/visualizar-questionarios');
+      reset();
     } catch (error) {
       setErrorState(error);
     }
@@ -72,14 +77,6 @@ const CreateSurvey = () => {
     clearErrors('questions.message');
     clearErrors('questions.ref');
     append({ questionTitle: '', questionType: '', options: [] });
-  };
-
-  const copyLink = async (text) => {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch (err) {
-      console.error(err);
-    }
   };
 
   return (
@@ -120,6 +117,10 @@ const CreateSurvey = () => {
               control={control}
               deleteQuestion={remove}
               error={errors?.questions}
+              watch={watch}
+              clearErrors={clearErrors}
+              setError={setError}
+              getValues={getValues}
             />
           );
         })}
@@ -138,7 +139,7 @@ const CreateSurvey = () => {
           {errorState?.message}
         </Alert>
       </Snackbar>
-      <ModalShare open={openModal} handleClose={() => setOpenModal(false)} />
+      <ModalShare state={modalShareState} handleClose={() => setModalShareState({ open: false, link: '' })} />
     </PageContainer>
   );
 };

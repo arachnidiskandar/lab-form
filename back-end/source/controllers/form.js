@@ -181,7 +181,10 @@ forms.answers = async (req, res, next) => {
 		})
 		formatted = []
 		for (i = 0; i < items[0].length; i++) {
-			formatted.push(items.map((o) => o[i]['content']))
+			item = {}
+			item['type'] = items[0][i]['type']
+			item['answers'] = items.map((o) => o[i]['content'])
+			formatted.push(item)
 		}
 		res.status(200).json(formatted)
 	} catch (error) {

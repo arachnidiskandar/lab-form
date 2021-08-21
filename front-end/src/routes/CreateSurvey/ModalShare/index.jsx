@@ -18,13 +18,27 @@ const StyledContainer = styled(Container)({
     marginTop: '20px',
   },
 });
-const ModalShare = ({ open, handleClose }) => {
+const ModalShare = ({ state, handleClose }) => {
+  const copyLink = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
-    <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+    <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={state.open}>
       <StyledContainer>
         <DialogTitle id="simple-dialog-title">Questionário criado com sucesso</DialogTitle>
         <Typography>Clique no botão para gerar o link de compartilhamento</Typography>
-        <Button variant="contained" size="large" color="primary" startIcon={<Share />}>
+        <Button
+          variant="contained"
+          size="large"
+          color="primary"
+          onClick={() => copyLink(state.link)}
+          startIcon={<Share />}
+        >
           Compartilhar
         </Button>
       </StyledContainer>

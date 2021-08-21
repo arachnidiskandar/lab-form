@@ -11,6 +11,7 @@ router.delete('/delete', Form.remove)
 router.post('/submit', Form.submit)
 router.get('/answers/:form', Form.answers)
 router.get('/share/:form', Form.share)
+router.get('/filter/:userid', Form.filter)
 
 module.exports = {
 	routes: router

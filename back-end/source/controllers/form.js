@@ -12,6 +12,7 @@ const schema = Joi.object({
 	title: Joi.string().required().label('title'),
 	description: Joi.string().label('description'),
 	questions: Joi.array().min(1).label('questions'),
+	userid: Joi.string().label('userid'),
 })
 
 const submitSchema = Joi.object({
@@ -40,11 +41,12 @@ forms.create = async (req, res, next) => {
 		return next()
 	}
 
-	const { title, description = null, questions } = req.body
+	const { title, description = null, questions, userid } = req.body
 	const form = new Form(
 		title,
 		description,
 		questions,
+		userid
 	)
 	try {
 		const result = await database.ref('forms').push(form)
@@ -71,6 +73,28 @@ forms.all = async (req, res) => {
 		const result = await database.ref('forms').once('value'), items = []
 		Object.entries(result.val()).forEach(([key, value]) => {
 			value.id = key
+			items.push(value)
+		})
+		res.status(200).json(items)
+	} catch (error) {
+		res.status(500).send(error.message)
+	}
+}
+
+forms.filter = async (req, res, next) => {
+	const { error } = Joi.object({
+		userid: Joi.string().required().label('userid'),
+	}).validate(req.params)
+	if (error) {
+		res.status(400).json({ message: error.details[0].message })
+		return next()
+	}
+
+	const { userid } = req.params
+	try {
+		const result = await database.ref('forms').orderByChild('userid').equalTo(userid).once('value')
+		items = []
+		Object.entries(result.val()).forEach(([key, value]) => {
 			items.push(value)
 		})
 		res.status(200).json(items)

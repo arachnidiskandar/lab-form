@@ -179,7 +179,11 @@ forms.answers = async (req, res, next) => {
 		Object.entries(result.val()).forEach(([key, value]) => {
 			items.push(value['answers'])
 		})
-		res.status(200).json(items)
+		formatted = []
+		for (i = 0; i < items[0].length; i++) {
+			formatted.push(items.map((o) => o[i]['content']))
+		}
+		res.status(200).json(formatted)
 	} catch (error) {
 		res.status(500).send(error.message)
 	}

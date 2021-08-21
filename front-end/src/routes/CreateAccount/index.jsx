@@ -45,7 +45,7 @@ const CreateAccount = () => {
         fb.auth()
           .signInWithEmailAndPassword(data.email, data.password)
           .then(() => {
-            history.push(`/home`);
+            history.push(`/visualizar-questionarios`);
             setToasterState({ open: true, message: 'Cadastro realizado com sucesso!', type: 'success' });
           })
           .catch((e) => setToasterState({ open: true, message: e.message, type: 'error' }));

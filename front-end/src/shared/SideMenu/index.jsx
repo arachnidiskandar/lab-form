@@ -37,11 +37,11 @@ const SideMenu = () => {
 
   const onLogout = () => {
     fb.auth().signOut();
-    history.push('/login');
   };
+
   return (
     <>
-      {true && (
+      {currentUser && (
         <>
           <AppBar position="fixed" className={classes.appBar}>
             <Toolbar>

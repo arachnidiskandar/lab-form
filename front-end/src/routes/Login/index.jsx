@@ -43,7 +43,7 @@ const Login = () => {
     fb.auth()
       .signInWithEmailAndPassword(data.email, data.password)
       .then(() => {
-        fb.auth().onAuthStateChanged((user) => (user ? history.push('/home') : null));
+        fb.auth().onAuthStateChanged((user) => (user ? history.push('/visualizar-questionarios') : null));
       })
       .catch((err) => {
         if (err.code === 'auth/user-not-found') {

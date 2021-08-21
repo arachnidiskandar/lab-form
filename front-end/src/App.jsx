@@ -13,6 +13,8 @@ import SideMenu from './shared/SideMenu';
 import Login from './routes/Login';
 import CreateAccount from './routes/CreateAccount';
 import { AuthProvider } from './context/AuthContext';
+import PrivateRoute from './shared/PrivateRoute';
+import NotFound from './routes/NotFound';
 
 const drawerWidth = 240;
 
@@ -52,17 +54,20 @@ const App = () => {
             <SideMenu />
             <Container className={classes.content}>
               <div className={classes.toolbar} />
-              <Route path="/login" render={() => <Login />} />
-              <Route path="/criar-conta" render={() => <CreateAccount />} />
               <Switch>
-                <Route exact path="/">
-                  <Redirect to="/visualizar-questionarios" />
-                </Route>
-                <Route path="/criar-questionario" render={() => <CreateSurvey />} />
-                <Route path="/responder-questionario/:id" render={() => <AnswerSurvey />} />
-                <Route path="/visualizar-questionarios" render={() => <ViewSurveys />} />
-                <Route path="/visualizar-respostas/:id" render={() => <ViewAnswers />} />
-                <Route path="/editar-questionario/:id" render={() => <EditSurvey />} />
+                <Route path="/login" component={Login} />
+                <Route path="/criar-conta" component={CreateAccount} />
+                <Switch>
+                  <Route exact path="/">
+                    <Redirect to="/visualizar-questionarios" />
+                  </Route>
+                  <PrivateRoute path="/criar-questionario" component={CreateSurvey} />
+                  <PrivateRoute path="/responder-questionario/:id" component={AnswerSurvey} />
+                  <PrivateRoute path="/visualizar-questionarios" component={ViewSurveys} />
+                  <PrivateRoute path="/visualizar-respostas/:id" component={ViewAnswers} />
+                  <PrivateRoute path="/editar-questionario/:id" component={EditSurvey} />
+                  <Route path="*" component={NotFound} />
+                </Switch>
               </Switch>
             </Container>
           </Router>

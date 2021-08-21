@@ -71,10 +71,12 @@ forms.get = async (req, res) => {
 forms.all = async (req, res) => {
 	try {
 		const result = await database.ref('forms').once('value'), items = []
-		Object.entries(result.val()).forEach(([key, value]) => {
-			value.id = key
-			items.push(value)
-		})
+		if(result.val()) {
+			Object.entries(result.val()).forEach(([key, value]) => {
+				value.id = key
+				items.push(value)
+			})
+		}
 		res.status(200).json(items)
 	} catch (error) {
 		res.status(500).send(error.message)
@@ -94,9 +96,11 @@ forms.filter = async (req, res, next) => {
 	try {
 		const result = await database.ref('forms').orderByChild('userid').equalTo(userid).once('value')
 		items = []
-		Object.entries(result.val()).forEach(([key, value]) => {
-			items.push(value)
-		})
+		if(result.val()) {
+			Object.entries(result.val()).forEach(([key, value]) => {
+				items.push(value)
+			})
+		}
 		res.status(200).json(items)
 	} catch (error) {
 		res.status(500).send(error.message)
@@ -175,16 +179,17 @@ forms.answers = async (req, res, next) => {
 	const { form } = req.params
 	try {
 		const result = await database.ref('answers').orderByChild('form').equalTo(form).once('value')
-		items = []
-		Object.entries(result.val()).forEach(([key, value]) => {
-			items.push(value['answers'])
-		})
-		formatted = []
-		for (i = 0; i < items[0].length; i++) {
-			item = {}
-			item['type'] = items[0][i]['type']
-			item['answers'] = items.map((o) => o[i]['content'])
-			formatted.push(item)
+		items = [], formatted = []
+		if(result.val()) {
+			Object.entries(result.val()).forEach(([key, value]) => {
+				items.push(value['answers'])
+			})
+			for (i = 0; i < items[0].length; i++) {
+				item = {}
+				item['type'] = items[0][i]['type']
+				item['answers'] = items.map((o) => o[i]['content'])
+				formatted.push(item)
+			}
 		}
 		res.status(200).json(formatted)
 	} catch (error) {

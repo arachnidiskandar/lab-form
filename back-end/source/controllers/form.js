@@ -98,6 +98,7 @@ forms.filter = async (req, res, next) => {
 		items = []
 		if(result.val()) {
 			Object.entries(result.val()).forEach(([key, value]) => {
+				value.id = key
 				items.push(value)
 			})
 		}
@@ -189,6 +190,15 @@ forms.answers = async (req, res, next) => {
 				item['type'] = items[0][i]['type']
 				item['answers'] = items.map((o) => o[i]['content'])
 				formatted.push(item)
+			}
+			for (i = 0; i < formatted.length; i++) {
+			    if (formatted[i].type == "CHECKBOXES" || formatted[i].type == "DROPDOWN") {
+			        const counts = {}
+			        for (const num of formatted[i].answers.flat()) {
+			          counts[num] = counts[num] ? counts[num] + 1 : 1
+			        }
+			        formatted[i]['answers'] = counts
+			    }
 			}
 		}
 		res.status(200).json(formatted)

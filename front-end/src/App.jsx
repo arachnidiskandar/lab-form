@@ -57,12 +57,12 @@ const App = () => {
               <Switch>
                 <Route path="/login" component={Login} />
                 <Route path="/criar-conta" component={CreateAccount} />
+                <Route path="/responder-questionario/:id" component={AnswerSurvey} />
                 <Switch>
                   <Route exact path="/">
                     <Redirect to="/visualizar-questionarios" />
                   </Route>
                   <PrivateRoute path="/criar-questionario" component={CreateSurvey} />
-                  <PrivateRoute path="/responder-questionario/:id" component={AnswerSurvey} />
                   <PrivateRoute path="/visualizar-questionarios" component={ViewSurveys} />
                   <PrivateRoute path="/visualizar-respostas/:id" component={ViewAnswers} />
                   <PrivateRoute path="/editar-questionario/:id" component={EditSurvey} />

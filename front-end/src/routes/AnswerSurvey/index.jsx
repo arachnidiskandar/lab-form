@@ -24,6 +24,7 @@ const PageContainer = styled(Container)({
 
 const AnswerSurvey = () => {
   const [survey, setSurvey] = useState(null);
+  const [isAnswered, setIsAnswered] = useState(false);
   const [toasterState, setToasterState] = useState({ open: false });
   const { pathname } = useLocation();
   const surveyId = pathname.split('/')[2];
@@ -48,16 +49,26 @@ const AnswerSurvey = () => {
   }, []);
 
   const onSubmit = async (data) => {
-    console.log(data);
     const responses = Object.values(data);
     const formatedForm = { form: surveyId };
-    formatedForm.answers = survey.questions.map((question, index) => ({
-      type: QUESTION_TYPE[question.type],
-      content: responses[index],
-    }));
+    formatedForm.answers = survey.questions.map((question, index) => {
+      if (QUESTION_TYPE[question.questionType] === QUESTION_TYPE.CHECKBOXES) {
+        const formatedAnswer = responses[index].map((answer) => answer !== undefined);
+        return {
+          type: QUESTION_TYPE[question.questionType],
+          content: formatedAnswer,
+        };
+      }
+      return {
+        type: QUESTION_TYPE[question.questionType],
+        content: responses[index],
+      };
+    });
+
     try {
       await axios.post('/forms/submit', formatedForm);
       setToasterState({ open: true, message: 'Questionário respondido', type: 'success' });
+      setIsAnswered(true);
     } catch (error) {
       setToasterState({ open: true, message: error.message, type: 'error' });
     }
@@ -66,30 +77,34 @@ const AnswerSurvey = () => {
   return (
     <>
       <PageContainer>
-        <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
-          <Typography variant="h3">{survey?.title}</Typography>
-          <Typography variant="subtitle1">{survey?.description}</Typography>
-          <div className="questions-container">
-            {survey &&
-              survey.questions.map((question, index) => {
-                return (
-                  <Question
-                    key={question.questionTitle}
-                    index={index}
-                    question={question}
-                    register={register}
-                    error={errors}
-                    options={question.options}
-                    control={control}
-                  />
-                );
-              })}
-          </div>
+        {!isAnswered ? (
+          <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
+            <Typography variant="h3">{survey?.title}</Typography>
+            <Typography variant="subtitle1">{survey?.description}</Typography>
+            <div className="questions-container">
+              {survey &&
+                survey.questions.map((question, index) => {
+                  return (
+                    <Question
+                      key={question.questionTitle}
+                      index={index}
+                      question={question}
+                      register={register}
+                      error={errors}
+                      options={question.options}
+                      control={control}
+                    />
+                  );
+                })}
+            </div>
 
-          <Button type="submit" variant="contained" size="large" color="primary">
-            Finalizar questionário
-          </Button>
-        </form>
+            <Button type="submit" variant="contained" size="large" color="primary">
+              Finalizar questionário
+            </Button>
+          </form>
+        ) : (
+          <Typography>Você pode fechar a página</Typography>
+        )}
         <Toaster toasterState={toasterState} onClose={() => setToasterState({ open: false })} />
       </PageContainer>
     </>

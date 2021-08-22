@@ -7,6 +7,7 @@ import useFetch from '../../hooks/UseFetch';
 import LoadingBar from '../../shared/LoadingBar';
 import AnswersList from './AnswersList';
 import AnswersChart from './AnswersChart';
+import { QUESTION_TYPE } from '../AnswerSurvey/Question';
 
 const PageContainer = styled(Container)({
   padding: '20px 0',
@@ -32,28 +33,42 @@ const ViewAnswers = () => {
   const { pathname } = useLocation();
   const surveyId = pathname.split('/')[2];
   const [loading, questions] = useFetch(`/forms/answers/${surveyId}`);
+  // const [loading, questions] = useFetch(`/forms/answers/-MhWGa5Hpi1dS2z5MGNz`);
   const [, survey] = useFetch(`/forms/${surveyId}`);
   const [formatedQuestions, setFormatedQuestions] = useState(null);
 
   useEffect(() => {
-    const answers = survey?.questions?.map((question, index) => {
-      const questionAnswers = questions.map((answer) => answer[index]);
-      return { title: question.title, answers: questionAnswers };
-    });
-    setFormatedQuestions(answers);
+    if (!survey || !questions) {
+      return;
+    }
+    const formated = survey.questions?.map((question, index) => ({ ...question, answers: questions[index] }));
+    // const answersFormated = answers.map((answer,index) => {
+    //   return { title: survey[].title, answers: answer };
+    // });
+    console.log(formated);
+    setFormatedQuestions(formated);
   }, [questions, survey]);
   return (
     <>
       <PageContainer>
-        {/* <Typography variant="h4">Respostas</Typography>
-        <AnswersChart />
+        <Typography variant="h4">Respostas</Typography>
+
         <div className="respostas-container">
-          {formatedQuestions && formatedQuestions.map((question) => <AnswersList question={question} />)}
-        </div> */}
-        <NoAnswserContainer>
-          <SentimentVeryDissatisfiedIcon />
-          <Typography variant="h4">Ainda não há nenhuma resposta</Typography>
-        </NoAnswserContainer>
+          {questions?.length > 0 ? (
+            formatedQuestions?.map((question) =>
+              question.type === QUESTION_TYPE.SINGLE_TEXTBOX ? (
+                <AnswersList answers={question.answers} />
+              ) : (
+                <AnswersChart answers={question.answers} />
+              )
+            )
+          ) : (
+            <NoAnswserContainer>
+              <SentimentVeryDissatisfiedIcon />
+              <Typography variant="h4">Ainda não há nenhuma resposta</Typography>
+            </NoAnswserContainer>
+          )}
+        </div>
       </PageContainer>
       {loading && <LoadingBar isLoadingFinished={loading} />}
     </>

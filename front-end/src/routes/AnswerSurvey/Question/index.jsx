@@ -19,7 +19,8 @@ export const QUESTION_TYPE = {
   SINGLE_TEXTBOX: 'SINGLE_TEXTBOX',
   text: 'SINGLE_TEXTBOX',
   CHECKBOXES: 'CHECKBOXES',
-  MULTIPLE_CHOICES: 'MULTIPLE_CHOICES',
+  DROPDOWN: 'DROPDOWN',
+  MULTIPLE_CHOICES: 'DROPDOWN',
 };
 
 const StyledQuestion = styled(Card)({
@@ -82,20 +83,13 @@ const Question = ({ question, register, error, index, options, control }) => {
     />
   );
 
-  const renderQuestion = (type) => {
-    const questionOptions = {
-      [QUESTION_TYPE.SINGLE_TEXTBOX]: renderQuestionText,
-      [QUESTION_TYPE.CHECKBOXES]: renderQuestionCheckBox,
-      [QUESTION_TYPE.MULTIPLE_CHOICES]: renderQuestionChoice,
-    };
-    return questionOptions[type]();
-  };
-
   return (
     <StyledQuestion>
       <CardContent>
         <Typography variant="h5">{question.questionTitle}</Typography>
-        {renderQuestion(question.questionType)}
+        {question.questionType === QUESTION_TYPE.SINGLE_TEXTBOX && renderQuestionText()}
+        {question.questionType === QUESTION_TYPE.CHECKBOXES && renderQuestionCheckBox()}
+        {question.questionType === QUESTION_TYPE.MULTIPLE_CHOICES && renderQuestionChoice()}
       </CardContent>
     </StyledQuestion>
   );

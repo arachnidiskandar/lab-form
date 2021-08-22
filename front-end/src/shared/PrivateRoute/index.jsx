@@ -1,15 +1,23 @@
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
 const PrivateRoute = ({ component: RouteComponent, ...rest }) => {
-  const { currentUser } = useContext(AuthContext);
+  const [isAuthenticated, setIsAuthenticated] = useState(undefined);
 
+  React.useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    setIsAuthenticated(user);
+  }, []);
   return (
-    <Route
-      {...rest}
-      render={(routeProps) => (currentUser ? <RouteComponent {...routeProps} /> : <Redirect to="/login" />)}
-    />
+    <>
+      {isAuthenticated !== undefined && (
+        <Route
+          {...rest}
+          render={(routeProps) => (isAuthenticated ? <RouteComponent {...routeProps} /> : <Redirect to="/login" />)}
+        />
+      )}
+    </>
   );
 };
 

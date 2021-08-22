@@ -36,7 +36,7 @@ const SideMenu = () => {
   const { currentUser } = useContext(AuthContext);
 
   const onLogout = () => {
-    fb.auth().signOut();
+    fb.auth().signOut().then(history.push('/login'));
   };
 
   return (

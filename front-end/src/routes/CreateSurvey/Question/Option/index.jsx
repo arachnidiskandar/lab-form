@@ -30,7 +30,7 @@ const MultipleChoice = ({ type, name, control, error, removeMethod, checkEqualOp
   }, [watchedValue]);
   return (
     <StyledOption>
-      {type === QUESTION_TYPE.MULTIPLE_CHOICES ? <RadioButtonUncheckedIcon /> : <CheckBoxOutlineBlankIcon />}
+      {type === QUESTION_TYPE.DROPDOWN ? <RadioButtonUncheckedIcon /> : <CheckBoxOutlineBlankIcon />}
       <Controller
         control={control}
         name={name}

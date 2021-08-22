@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, Container, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 
@@ -9,6 +9,7 @@ import ModalDelete from './ModalDelete';
 import Toaster from '../../shared/Toaster';
 import useFetch from '../../hooks/UseFetch';
 import LoadingBar from '../../shared/LoadingBar';
+import { AuthContext } from '../../context/AuthContext';
 
 const PageContainer = styled(Container)({
   padding: '20px 0',
@@ -26,7 +27,9 @@ const NoSurveyCreatedContainer = styled('div')({
 });
 
 const ViewSurveys = () => {
-  const [loading, surveys] = useFetch('/forms');
+  const { currentUser } = useContext(AuthContext);
+  const [loading, surveys] = useFetch(`/forms/filter/${currentUser?.uid}`);
+  // const [loading, surveys] = useFetch('/forms');
   const [surveysState, setSurveysState] = useState(surveys);
   const [modalDeleteState, setModalDeleteState] = useState({ open: false });
   const [toasterState, setToasterState] = useState({ open: false });
@@ -59,7 +62,6 @@ const ViewSurveys = () => {
       console.error(err);
     }
   };
-
   useEffect(() => {
     setSurveysState(surveys);
   }, [surveys]);
@@ -67,18 +69,22 @@ const ViewSurveys = () => {
     <>
       <PageContainer>
         <Typography variant="h4">Meus questionários</Typography>
-        {/* <div className="survey-list">
-          {surveysState &&
-            surveysState.map((surveyData) => (
-              <Survey key={surveyData.id} data={surveyData} onDeleteClick={handleModalDelete} onCopy={copyLink} />
-            ))}
-        </div> */}
-        <NoSurveyCreatedContainer>
-          <Typography variant="h5">Você ainda não tem nenhum questionário criado</Typography>
-          <Button variant="contained" color="primary" onClick={() => history.push('/criar-questionario')}>
-            Criar Questionário
-          </Button>
-        </NoSurveyCreatedContainer>
+        {surveysState && surveysState.length > 0 ? (
+          <div className="survey-list">
+            {surveysState &&
+              surveysState.map((surveyData) => (
+                <Survey key={surveyData.id} data={surveyData} onDeleteClick={handleModalDelete} onCopy={copyLink} />
+              ))}
+          </div>
+        ) : (
+          <NoSurveyCreatedContainer>
+            <Typography variant="h5">Você ainda não tem nenhum questionário criado</Typography>
+            <Button variant="contained" color="primary" onClick={() => history.push('/criar-questionario')}>
+              Criar Questionário
+            </Button>
+          </NoSurveyCreatedContainer>
+        )}
+
         <ModalDelete
           open={modalDeleteState.open}
           handleClose={() => closeModalDelete()}

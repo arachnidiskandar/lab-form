@@ -28,21 +28,21 @@ const CheckboxContainer = styled('div')({
   },
 });
 
-const AnswersList = ({ question }) => {
+const AnswersList = ({ answers }) => {
   const [showMore, setShowMore] = useState(false);
   const [maxAnswersSize, setMaxAnswersSize] = useState(null);
 
   useEffect(() => {
-    if (!question) {
+    if (!answers) {
       return;
     }
-    const size = question.answers.length;
+    const size = answers.length;
     if (size > 10) {
       setMaxAnswersSize(10);
     } else {
       setMaxAnswersSize(size);
     }
-  }, [question]);
+  }, [answers]);
 
   const renderAnswer = (text) => (
     <ListItem>
@@ -50,13 +50,13 @@ const AnswersList = ({ question }) => {
     </ListItem>
   );
 
-  const renderAnswersList = (answers) => {
+  const renderAnswersList = (answersList) => {
     if (maxAnswersSize > 5) {
       return (
         <>
-          <List>{answers.slice(0, 5).map((answer) => renderAnswer(answer.content))}</List>
+          <List>{answersList.slice(0, 5).map((answer) => renderAnswer(answer.content))}</List>
           {showMore && (
-            <List>{answers.slice(5, maxAnswersSize + 1).map((answer) => renderAnswer(answer.content))}</List>
+            <List>{answersList.slice(5, maxAnswersSize + 1).map((answer) => renderAnswer(answer.content))}</List>
           )}
         </>
       );
@@ -66,9 +66,9 @@ const AnswersList = ({ question }) => {
   return (
     <Card>
       <CardContent>
-        <Typography variant="h5">{question?.title}</Typography>
+        <Typography variant="h5">{answers?.title}</Typography>
         <Divider />
-        {question && maxAnswersSize > 5 && (
+        {answers && maxAnswersSize > 5 && (
           <CheckboxContainer>
             <span>Dez respostas</span>
             <Switch
@@ -79,9 +79,7 @@ const AnswersList = ({ question }) => {
             />
           </CheckboxContainer>
         )}
-        <AnswersListContainer showMore={showMore}>
-          {question && renderAnswersList(question.answers)}
-        </AnswersListContainer>
+        <AnswersListContainer showMore={showMore}>{answers && renderAnswersList(answers)}</AnswersListContainer>
       </CardContent>
     </Card>
   );

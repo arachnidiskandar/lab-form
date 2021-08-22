@@ -43,7 +43,12 @@ const AnswersChart = ({ answers }) => {
   }, [answers]);
   return (
     <>
-      <Doughnut data={data} />
+      {/* <Card>
+        <CardContent>
+          <Typography variant="h5">{answers?.title}</Typography>
+          <Doughnut data={data} />
+        </CardContent>
+      </Card> */}
     </>
   );
 };

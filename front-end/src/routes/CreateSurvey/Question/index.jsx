@@ -111,7 +111,7 @@ const Question = ({
               onChange={(event) => handleQuestionTypeChange(event.target.value)}
             >
               <MenuItem value={QUESTION_TYPE.SINGLE_TEXTBOX}>Texto</MenuItem>
-              <MenuItem value={QUESTION_TYPE.MULTIPLE_CHOICES}>Escolha múltipla</MenuItem>
+              <MenuItem value={QUESTION_TYPE.DROPDOWN}>Escolha múltipla</MenuItem>
               <MenuItem value={QUESTION_TYPE.CHECKBOXES}>Caixas de verificação</MenuItem>
             </Select>
             {error && error?.[index]?.questionType && (

@@ -192,13 +192,25 @@ forms.answers = async (req, res, next) => {
 				formatted.push(item)
 			}
 			for (i = 0; i < formatted.length; i++) {
-			    if (formatted[i].type == "CHECKBOXES" || formatted[i].type == "DROPDOWN") {
-			        const counts = {}
-			        for (const num of formatted[i].answers.flat()) {
-			          counts[num] = counts[num] ? counts[num] + 1 : 1
-			        }
-			        formatted[i]['answers'] = counts
-			    }
+				if (formatted[i].type == "CHECKBOXES") {
+					const counts = {}
+					for (n = 0; n < formatted[i].answers[0].length; n++) counts[n] = 0
+					for (j = 0; j < formatted[i].answers.length; j++) {
+						for (n = 0; n < formatted[i].answers[j].length; n++) {
+							if (formatted[i].answers[j][n]) {
+								counts[n] = counts[n] + 1
+							}
+						}
+					}
+					formatted[i]['answers'] = counts
+				}
+				if (formatted[i].type == "DROPDOWN") {
+					const counts = {}
+					for (const num of formatted[i].answers.flat()) {
+					  counts[num] = counts[num] ? counts[num] + 1 : 1
+					}
+					formatted[i]['answers'] = counts
+				}
 			}
 		}
 		res.status(200).json(formatted)

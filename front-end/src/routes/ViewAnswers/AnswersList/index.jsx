@@ -36,7 +36,6 @@ const AnswersList = ({ question }) => {
     if (!question) {
       return;
     }
-    console.log(question);
     const size = question.answers.length;
     if (size > 10) {
       setMaxAnswersSize(10);
@@ -60,7 +59,7 @@ const AnswersList = ({ question }) => {
         </>
       );
     }
-    return null;
+    return <List>{answersList.map((answer) => renderAnswer(answer))}</List>;
   };
   return (
     <Card>

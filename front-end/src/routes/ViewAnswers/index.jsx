@@ -41,7 +41,7 @@ const ViewAnswers = () => {
       return;
     }
     const formatedQuestionsList = survey.questions?.map((question, index) => ({
-      answers: answersSurvey,
+      answers: answersSurvey[index].answers,
       questionTitle: question.questionTitle,
       questionType: question.questionType,
     }));
@@ -56,9 +56,9 @@ const ViewAnswers = () => {
           {answersSurvey?.length > 0 &&
             formatedQuestions?.map((question) =>
               question.questionType === QUESTION_TYPE.SINGLE_TEXTBOX ? (
-                <AnswersList question={question} />
+                <AnswersList key={question.questionTitle} question={question} />
               ) : (
-                <AnswersChart question={question} />
+                <AnswersChart key={question.questionTitle} question={question} />
               )
             )}
           {!loading && answersSurvey?.length === 0 && (

@@ -182,6 +182,7 @@ forms.answers = async (req, res, next) => {
 		const result = await database.ref('answers').orderByChild('form').equalTo(form).once('value')
 		items = [], formatted = []
 		if(result.val()) {
+			const tmp = await database.ref('forms').child(form).once('value')
 			Object.entries(result.val()).forEach(([key, value]) => {
 				items.push(value['answers'])
 			})
@@ -194,11 +195,15 @@ forms.answers = async (req, res, next) => {
 			for (i = 0; i < formatted.length; i++) {
 				if (formatted[i].type == "CHECKBOXES") {
 					const counts = {}
-					for (n = 0; n < formatted[i].answers[0].length; n++) counts[n] = 0
+					for (n = 0; n < formatted[i].answers[0].length; n++) {
+						title = tmp.val()['questions'][i]['options'][n]['optionValue']
+						counts[title] = 0
+					}
 					for (j = 0; j < formatted[i].answers.length; j++) {
 						for (n = 0; n < formatted[i].answers[j].length; n++) {
 							if (formatted[i].answers[j][n]) {
-								counts[n] = counts[n] + 1
+								title = tmp.val()['questions'][i]['options'][n]['optionValue']
+								counts[title] = counts[title] + 1
 							}
 						}
 					}

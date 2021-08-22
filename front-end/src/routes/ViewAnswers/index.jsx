@@ -32,37 +32,36 @@ const NoAnswserContainer = styled('div')({
 const ViewAnswers = () => {
   const { pathname } = useLocation();
   const surveyId = pathname.split('/')[2];
-  const [loading, questions] = useFetch(`/forms/answers/${surveyId}`);
-  // const [loading, questions] = useFetch(`/forms/answers/-MhWGa5Hpi1dS2z5MGNz`);
+  const [loading, answersSurvey] = useFetch(`/forms/answers/${surveyId}`);
   const [, survey] = useFetch(`/forms/${surveyId}`);
   const [formatedQuestions, setFormatedQuestions] = useState(null);
 
   useEffect(() => {
-    if (!survey || !questions) {
+    if (!survey || !answersSurvey) {
       return;
     }
-    const formated = survey.questions?.map((question, index) => ({ ...question, answers: questions[index] }));
-    // const answersFormated = answers.map((answer,index) => {
-    //   return { title: survey[].title, answers: answer };
-    // });
-    console.log(formated);
-    setFormatedQuestions(formated);
-  }, [questions, survey]);
+    const formatedQuestionsList = survey.questions?.map((question, index) => ({
+      answers: answersSurvey,
+      questionTitle: question.questionTitle,
+      questionType: question.questionType,
+    }));
+    setFormatedQuestions(formatedQuestionsList);
+  }, [answersSurvey, survey]);
   return (
     <>
       <PageContainer>
         <Typography variant="h4">Respostas</Typography>
 
         <div className="respostas-container">
-          {questions?.length > 0 ? (
+          {answersSurvey?.length > 0 &&
             formatedQuestions?.map((question) =>
-              question.type === QUESTION_TYPE.SINGLE_TEXTBOX ? (
-                <AnswersList answers={question.answers} />
+              question.questionType === QUESTION_TYPE.SINGLE_TEXTBOX ? (
+                <AnswersList question={question} />
               ) : (
-                <AnswersChart answers={question.answers} />
+                <AnswersChart question={question} />
               )
-            )
-          ) : (
+            )}
+          {!loading && answersSurvey?.length === 0 && (
             <NoAnswserContainer>
               <SentimentVeryDissatisfiedIcon />
               <Typography variant="h4">Ainda não há nenhuma resposta</Typography>

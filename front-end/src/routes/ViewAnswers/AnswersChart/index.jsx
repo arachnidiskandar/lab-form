@@ -38,9 +38,9 @@ const data = {
   ],
 };
 const AnswersChart = ({ answers }) => {
-  useEffect(() => {
-    console.log('todo');
-  }, [answers]);
+  // useEffect(() => {
+  //   console.log('todo');
+  // }, [answers]);
   return (
     <>
       {/* <Card>

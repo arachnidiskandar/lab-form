@@ -68,8 +68,8 @@ const CreateSurvey = () => {
       const response = await axios.post('/forms/create', form);
       const shareLink = `localhost:3000/responder-questionario/${response.data.split('/')[4]}`;
       setModalShareState({ open: true, link: shareLink });
-      // history.push('/visualizar-questionarios');
       reset();
+      history.push('/visualizar-questionarios');
     } catch (error) {
       setErrorState(error);
     }
